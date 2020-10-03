@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+import datetime
 import time
 
 class Trainer:
@@ -15,14 +16,15 @@ class Trainer:
         self.model = model
         self.epochs = args.epochs
         self.scheduler = scheduler
+        self.best_acc = -1
 
     
-    def flat_accuracy(preds, labels):
+    def flat_accuracy(self, preds, labels):
         pred_flat = np.argmax(preds, axis=1).flatten()
         labels_flat = labels.flatten()
         return np.sum(pred_flat == labels_flat) / len(labels_flat)
 
-    def format_time(elapsed):
+    def format_time(self, elapsed):
         elapsed_rounded = int(round((elapsed)))
         return str(datetime.timedelta(seconds=elapsed_rounded))
 
@@ -43,7 +45,7 @@ class Trainer:
             self.model.train()
 
             for step, batch in enumerate(self.train_data):
-                if step % 500 == 0 and not step == 0:
+                if step % self.args.checkpoint == 0 and not step == 0:
                     elapsed = self.format_time(time.time() - t0)
                     print('  Batch {:>5,}  of  {:>5,}.    Elapsed: {:}.'.format(step, len(self.train_data), elapsed))
                 batch = tuple(t.to(self.device) for t in batch)
@@ -83,7 +85,7 @@ class Trainer:
                 batch = tuple(t.to(self.device) for t in batch)
                 b_input_ids, b_input_mask, b_labels = batch
                 with torch.no_grad():     
-                    outputs = model(b_input_ids, 
+                    outputs = self.model(b_input_ids, 
                                     token_type_ids=None, 
                                     attention_mask=b_input_mask)
                 
@@ -95,8 +97,19 @@ class Trainer:
                 eval_accuracy += tmp_eval_accuracy
                 nb_eval_steps += 1
 
+            acc = eval_accuracy / nb_eval_steps
             print("  Accuracy: {0:.2f}".format(eval_accuracy/nb_eval_steps))
-            print("  Validation took: {:}".format(format_time(time.time() - t0)))
+            print("  Validation took: {:}".format(self.format_time(time.time() - t0)))
+            if self.best_acc < acc:
+                print("Best model saved")
+                self.best_acc = acc
+                torch.save({
+                    'epoch' : epoch_i,
+                    'model_state_dict' : self.model.state_dict(),
+                    'optimizer_state_dict' : self.optimizer.state_dict(),
+                    'loss' : loss
+                }, self.args.save_dir)
+                torch.save(self.model, self.args.save_dir + '_save')
 
         print("")
         print("Training complete!")

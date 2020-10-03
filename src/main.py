@@ -60,6 +60,7 @@ if __name__ == "__main__":
     scheduler = scheduler = get_linear_schedule_with_warmup(optimizer, 
                                             num_warmup_steps = 0,
                                             num_training_steps = total_steps)
+    model = model.to(args.device)
 
     trainer = Trainer(model, optimizer, scheduler, train_dataloader, validation_dataloader, args)
     trainer.run()

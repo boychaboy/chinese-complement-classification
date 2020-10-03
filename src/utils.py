@@ -29,6 +29,7 @@ def get_args():
     # training
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--max_seq_length", type=int, default=128)
+    parser.add_argument("--checkpoint", type=int, default=500)
     parser.add_argument("--train_batch_size", type=int, default=32)
     parser.add_argument("--eval_batch_size", type=int, default=32)
 
@@ -37,6 +38,8 @@ def get_args():
     parser.add_argument("--eps", type=float, default=1e-9)
     parser.add_argument("--weight_decay", type=float, default=0.0001)
     parser.add_argument("--max_grad_norm", type=float, default=0)
+    parser.add_argument("--save_dir", type=str, default="../save/one")
+    parser.add_argument("--output_dir", type=str, default="../save/two")
 
     parser.add_argument('--seed', type=int, default=0)
 
@@ -49,7 +52,7 @@ def mask_data(data, labels, max_len):
     for label in labels:
         s = []
         l = []
-        for sent in data:
+        for sent in data[label][0]:
             if label not in sent:
                 continue
             sent = sent[:max_len]
