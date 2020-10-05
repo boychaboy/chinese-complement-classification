@@ -34,9 +34,8 @@ if __name__ == "__main__":
     labels = ['过来','过去','起来','上来','下来','下去','出来','上去']
     
     if args.model == 'bert':
-        MODEL_TYPE = 'bert-base-chinese'
-        model = BertForSequenceClassification.from_pretrained(MODEL_TYPE, num_labels=len(labels))
-        tokenizer = BertTokenizer.from_pretrained(MODEL_TYPE)
+        model = BertForSequenceClassification.from_pretrained(args.model_name_or_path, num_labels=len(labels))
+        tokenizer = BertTokenizer.from_pretrained(args.model_name_or_path)
 
     # train_sent, train_label = mask_data(data, labels, 500)
     train_data = json.load(open(args.train_data))

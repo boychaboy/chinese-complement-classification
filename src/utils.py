@@ -38,8 +38,8 @@ def get_args():
     parser.add_argument("--eps", type=float, default=1e-9)
     parser.add_argument("--weight_decay", type=float, default=0.0001)
     parser.add_argument("--max_grad_norm", type=float, default=0)
-    parser.add_argument("--save_dir", type=str, default="../save/one")
-    parser.add_argument("--output_dir", type=str, default="../save/two")
+    parser.add_argument("--save_dir", type=str, default="models/baseline/baseline.tar")
+    parser.add_argument("--model_name_or_path", type=str, default="bert-base-chinese")
 
     parser.add_argument('--seed', type=int, default=0)
 

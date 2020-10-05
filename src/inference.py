@@ -24,7 +24,7 @@ if __name__ == "__main__":
     
     test_path = open(args.test_path, 'r', encoding='utf-8')
 
-    labels = ['过来','过去','起来','上来','下来','下去']
+    labels = ['过来','过去','起来','上来','下来','下去','出来','上去']
     MODEL_TYPE = 'bert-base-chinese'
     
     print(f"Loading model from '{args.model_path}'...")
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     model.eval()
    
     tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
-    print("Done")
+    print("Done!\n")
     
     test = open(args.test_path, 'r')
     test_data = json.load(test)
@@ -48,17 +48,19 @@ if __name__ == "__main__":
         sent_tensor = torch.tensor(sent_ids).unsqueeze(0).to('cuda')
         output = model(sent_tensor)
         output = output[0]
-        logits = output[0].detach().cpu().numpy()[0]
+        logits = output.detach().cpu().numpy()[0]
         predict = labels[np.argmax(logits, axis=0)]
-        import ipdb; ipdb.set_trace(context=10)
-        if predict == label.strip():
+        if predict == label:
             total_right += 1
-            test_w.write(sent + '\t' + label + '\n')
-        else:
-            softmax_output = softmax(output, 1)
-            test_w.write(data)
-            for prob, lab in zip(softmax_output[0].tolist(),labels):
-                test_w.write(lab+":"+str(int(prob*100))+"%"+'\n')
-            test_w.write("\n")
+            test_w.write('o ')
+        else : 
+            test_w.write('x ')
+        softmax_output = softmax(output, 1)
+        test_w.write(sent + '\n')
+        test_w.write(f"Answer : {label}\n")
+        test_w.write(f"Predict : {predict}\n")
+        for prob, lab in zip(softmax_output[0].tolist(),labels):
+            test_w.write("\t"+lab+":"+str(int(prob*100))+"%"+'\n')
+        test_w.write("\n")
     print(f"Test accuracy : {(total_right/total_num)*100:.2f}")
 
