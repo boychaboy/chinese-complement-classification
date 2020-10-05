@@ -29,28 +29,20 @@ if __name__ == "__main__":
     args.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     args.n_gpu = torch.cuda.device_count()
     set_seed(args)
-
-    classes = dict()
-    classes['过来'] = ["verb_guolai_literature.txt", "verb_guolai_media.txt", "verb_guolai_textbook.txt"]
-    classes['过去'] = ["verb_guoqu_literature.txt", "verb_guoqu_media.txt", "verb_guoqu_textbook.txt"]
-    classes['起来'] = ["verb_qilai_literature.txt", "verb_qilai_media.txt", "verb_qilai_textbook.txt"]
-    classes['上来'] = ["verb_shanglai_literature.txt", "verb_shanglai_media.txt", "verb_shanglai_textbook.txt"]
-    classes['下来'] = ["verb_xialai_literature.txt", "verb_xialai_media.txt", "verb_xialai_textbook.txt"]
-    classes['下去'] = ["verb_xiaqu_literature.txt", "verb_xiaqu_media.txt", "verb_xiaqu_textbook.txt"]
     
     # Load sentences
-    data = load_data(args, classes)
-    labels = ['过来','过去','起来','上来','下来','下去']
+    labels = ['过来','过去','起来','上来','下来','下去','出来','上去']
     
-    train_sent, train_label = mask_data(data, labels, 500)
-
     if args.model == 'bert':
         MODEL_TYPE = 'bert-base-chinese'
         model = BertForSequenceClassification.from_pretrained(MODEL_TYPE, num_labels=len(labels))
         tokenizer = BertTokenizer.from_pretrained(MODEL_TYPE)
 
-    train_dataloader, validation_dataloader = preprocess(train_sent, train_label, labels, tokenizer, args)
-    
+    # train_sent, train_label = mask_data(data, labels, 500)
+    train_data = json.load(open(args.train_data))
+    val_data = json.load(open(args.val_data))
+
+    train_dataloader, validation_dataloader = preprocess(train_data, val_data, labels, tokenizer, args)
 
     optimizer = AdamW(model.parameters(),
                   lr = 2e-5, 

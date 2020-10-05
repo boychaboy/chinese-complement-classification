@@ -98,18 +98,12 @@ class Trainer:
                 nb_eval_steps += 1
 
             acc = eval_accuracy / nb_eval_steps
-            print("  Accuracy: {0:.2f}".format(eval_accuracy/nb_eval_steps))
+            print("  Accuracy: {0:.3f}".format(eval_accuracy/nb_eval_steps))
             print("  Validation took: {:}".format(self.format_time(time.time() - t0)))
             if self.best_acc < acc:
                 print("Best model saved")
                 self.best_acc = acc
-                torch.save({
-                    'epoch' : epoch_i,
-                    'model_state_dict' : self.model.state_dict(),
-                    'optimizer_state_dict' : self.optimizer.state_dict(),
-                    'loss' : loss
-                }, self.args.save_dir)
-                torch.save(self.model, self.args.save_dir + '_save')
+                torch.save(self.model, self.args.save_dir)
 
         print("")
         print("Training complete!")

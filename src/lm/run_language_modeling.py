@@ -124,6 +124,7 @@ class DataTrainingArguments:
     )
 
 
+
 def get_dataset(args: DataTrainingArguments, tokenizer: PreTrainedTokenizer, evaluate=False):
     file_path = args.eval_data_file if evaluate else args.train_data_file
     if args.line_by_line:
@@ -142,7 +143,12 @@ def main():
     #parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    training_args.num_train_epochs = 5
+    training_args.num_train_epochs = 3
+    training_args.per_device_train_batch_size = 4
+    training_args.per_device_eval_batch_size = 16
+    training_args.logging_steps = 50000
+    training_args.save_steps = 5000
+    
 
     if data_args.eval_data_file is None and training_args.do_eval:
         raise ValueError(
@@ -294,6 +300,4 @@ def _mp_fn(index):
 
 
 if __name__ == "__main__":
-    os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
-    os.environ["CUDA_VISIBLE_DEVICES"]="1"
     main()

@@ -22,8 +22,8 @@ def load_data(args, classes):
 def get_args():
     parser = argparse.ArgumentParser()
     # data
-    parser.add_argument("--data_dir", type=str, default="../data/week3_data/")
-    parser.add_argument("--split", type=float, default=0.1)
+    parser.add_argument("--train_data", type=str, default="data/train.json")
+    parser.add_argument("--val_data", type=str, default="data/val.json")
     # model
     parser.add_argument("--model", choices=['bert'], default='bert', type=str)
     # training
@@ -63,24 +63,32 @@ def mask_data(data, labels, max_len):
         total_labels.extend(l)
     return total_sentences, total_labels
 
-def preprocess(train_sent, train_label, labels, tokenizer, args):
+def preprocess(train_data, val_data, labels, tokenizer, args):
+    train_sent = [data.split('\t')[0] for data in train_data]
+    train_label = [data.split('\t')[1] for data in train_data]
+    val_sent = [data.split('\t')[0] for data in val_data]
+    val_label = [data.split('\t')[1] for data in val_data]
+
     tokenized_sent = [tokenizer.tokenize(sent) for sent in train_sent]
     input_ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_sent]
-    input_ids = pad_sequences(input_ids, maxlen=args.max_seq_length, \
+    train_inputs = pad_sequences(input_ids, maxlen=args.max_seq_length, \
             dtype="long", truncating="post", padding="post")
-    idx_label = [labels.index(x) for x in train_label]
-    attention_masks = []
-    for seq in input_ids:
+    train_labels = [labels.index(x) for x in train_label]
+    train_masks = []
+    for seq in train_inputs:
         seq_mask = [float(i>0) for i in seq]
-        attention_masks.append(seq_mask)
-    train_inputs, validation_inputs, train_labels, validation_labels = train_test_split(input_ids, idx_label, 
-                                                                                    random_state=args.seed, 
-                                                                                    test_size=args.split)
-    # 어텐션 마스크를 훈련셋과 검증셋으로 분리
-    train_masks, validation_masks, _, _ = train_test_split(attention_masks, 
-                                                           input_ids,
-                                                           random_state=args.seed, 
-                                                           test_size=0.1)
+        train_masks.append(seq_mask)
+
+    tokenized_sent = [tokenizer.tokenize(sent) for sent in val_sent]
+    input_ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_sent]
+    validation_inputs = pad_sequences(input_ids, maxlen=args.max_seq_length, \
+            dtype="long", truncating="post", padding="post")
+    validation_labels = [labels.index(x) for x in val_label]
+    validation_masks = []
+    for seq in validation_inputs:
+        seq_mask = [float(i>0) for i in seq]
+        validation_masks.append(seq_mask)
+    
     # 데이터를 파이토치의 텐서로 변환
     train_inputs = torch.tensor(train_inputs)
     train_labels = torch.tensor(train_labels)
