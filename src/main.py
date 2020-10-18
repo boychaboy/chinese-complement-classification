@@ -44,12 +44,12 @@ if __name__ == "__main__":
     train_dataloader, validation_dataloader = preprocess(train_data, val_data, labels, tokenizer, args)
 
     optimizer = AdamW(model.parameters(),
-                  lr = 2e-5, 
-                  eps = 1e-8 
+                  lr = args.lr, 
+                  eps = args.eps
                 )
     total_steps = len(train_dataloader) * args.epochs
     scheduler = scheduler = get_linear_schedule_with_warmup(optimizer, 
-                                            num_warmup_steps = 0,
+                                            num_warmup_steps = total_steps * 0.1,
                                             num_training_steps = total_steps)
     model = model.to(args.device)
 

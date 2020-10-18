@@ -23,7 +23,7 @@ CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--eval_batch_size $eval_batch \
 	--checkpoint $checkpoint \
 	--save_dir "models/$model_name/$model_name.tar" \
-	--model_name_or_path bert-base-chinese \
+	--model_name_or_path "models/finetune" \
 	--train_data "data/train.json" \
 	--val_data "data/val.json"
 
