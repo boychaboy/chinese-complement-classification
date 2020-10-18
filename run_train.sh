@@ -12,7 +12,7 @@ fi
 epochs=10
 lr=1e-4
 seed=42
-train_batch=100
+train_batch=16
 eval_batch=200
 checkpoint=200
 
@@ -24,6 +24,7 @@ CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--checkpoint $checkpoint \
 	--save_dir "models/$model_name/$model_name.tar" \
 	--model_name_or_path bert-base-chinese \
+	--one_sent \
 	--train_data "data/train.json" \
 	--val_data "data/val.json"
 

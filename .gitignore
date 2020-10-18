@@ -1,7 +1,6 @@
 *.tar
 models/
 __trash__/
-src/lm/save/
 *.bin
 *.pt
 # Created by https://www.toptal.com/developers/gitignore/api/linux,python
