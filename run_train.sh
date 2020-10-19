@@ -9,12 +9,17 @@ else
 	exit 1
 fi
 
-epochs=10
+if [[ ! -d models/"$model_name" ]]
+then
+	mkdir models/"$model_name"
+fi
+
+epochs=5
 lr=1e-4
 seed=42
-train_batch=16
-eval_batch=200
-checkpoint=200
+train_batch=256
+eval_batch=512
+checkpoint=100
 
 CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--model bert --epochs $epochs \
@@ -23,7 +28,7 @@ CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--eval_batch_size $eval_batch \
 	--checkpoint $checkpoint \
 	--save_dir "models/$model_name/$model_name.tar" \
-	--model_name_or_path bert-base-chinese \
+	--model_name_or_path hfl/chinese-bert-wwm \
 	--one_sent \
 	--train_data "data/train.json" \
 	--val_data "data/val.json"

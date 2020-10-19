@@ -66,8 +66,8 @@ class Trainer:
             avg_train_loss = total_loss / len(self.train_data)            
 
             print("")
-            print("  Average training loss: {0:.2f}".format(avg_train_loss))
-            print("  Training epcoh took: {:}".format(self.format_time(time.time() - t0)))
+            print("  Average training loss: {0:.3f}".format(avg_train_loss))
+            print("  Training epoch took: {:}".format(self.format_time(time.time() - t0)))
                 
             # ========================================
             #               Validation

@@ -44,9 +44,17 @@ if __name__ == "__main__":
     train_dataloader, validation_dataloader = preprocess(train_data, val_data, labels, tokenizer, args)
 
     optimizer = AdamW(model.parameters(),
-                  lr = args.lr, 
-                  eps = args.eps
-                )
+            lr = args.lr, 
+            eps = args.eps, 
+            weight_decay = args.weight_decay
+            )
+    # elif args.optimizer == 'radam':
+        # optimizer = RAdam(model.parameters(),
+                # lr = args.lr,
+                # eps = args.eps,
+                # weight_decay = args.weight_decay
+                # )
+        
     total_steps = len(train_dataloader) * args.epochs
     scheduler = scheduler = get_linear_schedule_with_warmup(optimizer, 
                                             num_warmup_steps = total_steps * 0.1,
