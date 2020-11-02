@@ -9,12 +9,12 @@ else
 	exit 1
 fi
 
-epochs=3
-lr=5e-4
+epochs=5
+lr=5e-5
 seed=42
-train_batch=64
-eval_batch=64
-checkpoint=500
+train_batch=200
+eval_batch=400
+checkpoint=100
 
 CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--model bert --epochs $epochs \
@@ -23,7 +23,7 @@ CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--eval_batch_size $eval_batch \
 	--checkpoint $checkpoint \
 	--save_dir "outputs/$model_name/$model_name.tar" \
-	--model_name_or_path "src/lm/save/finetune/" \
+	--model_name_or_path hfl/chinese-bert-wwm-ext \
 	--train_data "data/train.json" \
 	--val_data "data/val.json"
 
