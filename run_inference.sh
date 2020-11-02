@@ -12,5 +12,6 @@ fi
 CUDA_VISIBLE_DEVICES=$gpu_id python3 src/inference.py \
 	--test_path "data/test.json" \
 	--model_path "models/$model_name/$model_name.tar" \
-	--result_path "models/$model_name/test_result.txt"
+	--result_path "models/$model_name/test_result.txt" \
+	--wrong_path "models/$model_name/wrong_sent.txt"
 

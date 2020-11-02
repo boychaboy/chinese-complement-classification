@@ -8,10 +8,6 @@ else
 	echo "Run format > ./run_inference.sh {model_dir} {gpu_id}"
 	exit 1
 fi
-if [[ ! -d models/"$model_name" ]]
-then
-	mkdir models/"$model_name"
-fi
 
 epochs=5
 lr=1e-4
@@ -27,7 +23,7 @@ CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \
 	--eval_batch_size $eval_batch \
 	--checkpoint $checkpoint \
 	--save_dir "models/$model_name/$model_name.tar" \
-	--model_name_or_path hfl/chinese-bert-wwm-ext \
-	--one_sent \
+	--model_name_or_path chinese-bert-wwm \
 	--train_data "data/train.json" \
 	--val_data "data/val.json"
+

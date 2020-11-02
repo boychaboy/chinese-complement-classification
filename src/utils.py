@@ -26,6 +26,7 @@ def get_args():
     parser.add_argument("--val_data", type=str, default="data/val.json")
     # model
     parser.add_argument("--model", choices=['bert'], default='bert', type=str)
+    parser.add_argument("--optimizer", choices=['adam', 'radam'], default='adam', type=str)
     # training
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--max_seq_length", type=int, default=128)
@@ -40,6 +41,8 @@ def get_args():
     parser.add_argument("--max_grad_norm", type=float, default=0)
     parser.add_argument("--save_dir", type=str, default="models/baseline/baseline.tar")
     parser.add_argument("--model_name_or_path", type=str, default="bert-base-chinese")
+
+    parser.add_argument("--one_sent", action="store_true")
 
     parser.add_argument('--seed', type=int, default=0)
 
@@ -69,6 +72,31 @@ def preprocess(train_data, val_data, labels, tokenizer, args):
     val_sent = [data.split('\t')[0] for data in val_data]
     val_label = [data.split('\t')[1] for data in val_data]
 
+    if args.one_sent:
+        new_train_sent = []
+        new_train_label = []
+        for sents, label in zip(train_sent, train_label):
+            if '[MASK]' in sents:
+                new_train_label.append(label)
+                all_sents = sents.split("。")
+                for s in all_sents:
+                    if '[MASK]' in s:
+                        new_train_sent.append(s)
+                        break
+        new_val_sent = []
+        new_val_label = []
+        for sents, label in zip(val_sent, val_label):
+            if '[MASK]' in sents:
+                new_val_label.append(label)
+                all_sents = sents.split("。")
+                for s in all_sents:
+                    if '[MASK]' in s:
+                        new_val_sent.append(s)
+                        break
+        train_sent = new_train_sent
+        train_label = new_train_label    
+        val_sent = new_val_sent
+        val_label = new_val_label
     tokenized_sent = [tokenizer.tokenize(sent) for sent in train_sent]
     input_ids = [tokenizer.convert_tokens_to_ids(x) for x in tokenized_sent]
     train_inputs = pad_sequences(input_ids, maxlen=args.max_seq_length, \

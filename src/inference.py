@@ -20,6 +20,8 @@ if __name__ == "__main__":
             default="models/baseline/baseline.tar", help='model path')
     parser.add_argument("--result_path", type=str, \
             default="models/baseline/test_report.txt", help='output path')
+    parser.add_argument("--wrong_path", type=str, \
+            default="models/baseline/wrong_sent.txt", help='wrong_sent_path')
     args = parser.parse_args()
     
     test_path = open(args.test_path, 'r', encoding='utf-8')
@@ -41,6 +43,7 @@ if __name__ == "__main__":
     total_right = 0
 
     test_w = open(args.result_path, 'w')
+    wrong_w = open(args.wrong_path, 'w')
     print(f"Running inference with test data...")
     for data in test_data:
         sent, label = data.split('\t')
@@ -62,5 +65,12 @@ if __name__ == "__main__":
         for prob, lab in zip(softmax_output[0].tolist(),labels):
             test_w.write("\t"+lab+":"+str(int(prob*100))+"%"+'\n')
         test_w.write("\n")
+        if predict != label : 
+            wrong_w.write(sent + '\n')
+            wrong_w.write(f"Answer : {label}\n")
+            wrong_w.write(f"Predict : {predict}\n")
+            for prob, lab in zip(softmax_output[0].tolist(),labels):
+                wrong_w.write("\t"+lab+":"+str(int(prob*100))+"%"+'\n')
+            wrong_w.write("\n")
     print(f"Test accuracy : {(total_right/total_num)*100:.2f}")
 
