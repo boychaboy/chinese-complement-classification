@@ -14,10 +14,10 @@ then
 fi
 
 epochs=5
-lr=1e-4
+lr=5e-5
 seed=42
-train_batch=256
-eval_batch=512
+train_batch=200
+eval_batch=400
 checkpoint=100
 
 CUDA_VISIBLE_DEVICES=$gpu_id python3 src/main.py \

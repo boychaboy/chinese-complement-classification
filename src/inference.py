@@ -22,6 +22,7 @@ if __name__ == "__main__":
             default="models/baseline/test_report.txt", help='output path')
     parser.add_argument("--wrong_path", type=str, \
             default="models/baseline/wrong_sent.txt", help='wrong_sent_path')
+    parser.add_argument("--one_sent", action='store_true')
     args = parser.parse_args()
     
     test_path = open(args.test_path, 'r', encoding='utf-8')
@@ -47,6 +48,14 @@ if __name__ == "__main__":
     print(f"Running inference with test data...")
     for data in test_data:
         sent, label = data.split('\t')
+        
+        if args.one_sent:
+            if '[MASK]' in sent:
+                all_sents = sent.split("。")
+                for s in all_sents:
+                    if '[MASK]' in s:
+                        sent = s
+
         sent_ids = tokenizer(sent)['input_ids']
         sent_tensor = torch.tensor(sent_ids).unsqueeze(0).to('cuda')
         output = model(sent_tensor)
