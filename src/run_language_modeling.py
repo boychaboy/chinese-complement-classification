@@ -144,10 +144,10 @@ def main():
     parser = HfArgumentParser((ModelArguments, DataTrainingArguments, TrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     training_args.num_train_epochs = 3
-    training_args.per_device_train_batch_size = 4
-    training_args.per_device_eval_batch_size = 16
-    training_args.logging_steps = 50000
-    training_args.save_steps = 5000
+    training_args.per_device_train_batch_size = 8
+    training_args.per_device_eval_batch_size = 32
+    training_args.logging_steps = 0
+    training_args.save_steps = 0
     
 
     if data_args.eval_data_file is None and training_args.do_eval:
