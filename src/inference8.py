@@ -18,6 +18,8 @@ if __name__ == "__main__":
             default="data/test.json", help='test data path')
     parser.add_argument("--model_path", type=str, \
             default="models/baseline/baseline.tar", help='model path')
+    parser.add_argument("--model_type", type=str, \
+            default="bert-base-chinese")
     parser.add_argument("--result_path", type=str, \
             default="models/baseline/test_report.txt", help='output path')
     parser.add_argument("--wrong_path", type=str, \
@@ -27,7 +29,8 @@ if __name__ == "__main__":
     
     test_path = open(args.test_path, 'r', encoding='utf-8')
 
-    labels = ['过来','过去','起来','上来','下来','下去','出来','上去']
+    labels = ['上去','下去','下来','出来','起来','上来','过来','过去']
+
     MODEL_TYPE = 'bert-base-chinese'
     
     print(f"Loading model from '{args.model_path}'...")
@@ -35,7 +38,7 @@ if __name__ == "__main__":
     model = model.to('cuda')
     model.eval()
    
-    tokenizer = BertTokenizer.from_pretrained('bert-base-chinese')
+    tokenizer = BertTokenizer.from_pretrained(args.model_type)
     print("Done!\n")
     
     test = open(args.test_path, 'r')

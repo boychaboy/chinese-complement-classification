@@ -30,10 +30,7 @@ def get_args():
     # training
     parser.add_argument("--epochs", type=int, default=5)
     parser.add_argument("--max_seq_length", type=int, default=128)
-    parser.add_argument("--checkpoint", type=int, default=500)
     parser.add_argument("--train_batch_size", type=int, default=32)
-    parser.add_argument("--eval_batch_size", type=int, default=32)
-
     parser.add_argument("--lr", type=float, default=5e-4)
     parser.add_argument("--adam_betas", type=str, default="(0.9, 0.98)")
     parser.add_argument("--eps", type=float, default=1e-9)

@@ -31,7 +31,7 @@ if __name__ == "__main__":
     set_seed(args)
     
     # Load sentences
-    labels = ['过来','过去','起来','上来','下来','下去','出来','上去']
+    labels = ['上去','下去','下来','出来','起来','上来','过来','过去']
     
     if args.model == 'bert':
         model = BertForSequenceClassification.from_pretrained(args.model_name_or_path, num_labels=len(labels))
@@ -40,6 +40,7 @@ if __name__ == "__main__":
     # train_sent, train_label = mask_data(data, labels, 500)
     train_data = json.load(open(args.train_data))
     val_data = json.load(open(args.val_data))
+    args.eval_batch_size = args.train_batch_size * 4 
 
     train_dataloader, validation_dataloader = preprocess(train_data, val_data, labels, tokenizer, args)
 
@@ -48,18 +49,14 @@ if __name__ == "__main__":
             eps = args.eps, 
             weight_decay = args.weight_decay
             )
-    # elif args.optimizer == 'radam':
-        # optimizer = RAdam(model.parameters(),
-                # lr = args.lr,
-                # eps = args.eps,
-                # weight_decay = args.weight_decay
-                # )
-        
+       
     total_steps = len(train_dataloader) * args.epochs
     scheduler = scheduler = get_linear_schedule_with_warmup(optimizer, 
                                             num_warmup_steps = total_steps * 0.1,
                                             num_training_steps = total_steps)
     model = model.to(args.device)
+
+    args.checkpoint = total_steps / 10
 
     trainer = Trainer(model, optimizer, scheduler, train_dataloader, validation_dataloader, args)
     trainer.run()
