@@ -31,7 +31,7 @@ if __name__ == "__main__":
     set_seed(args)
     
     # Load sentences
-    labels = ['上去','下去','下来','出来','起来','上来','过来','过去']
+    labels = ['下去','下来','出来','起来','上去','上来','过来','过去']
     
     if args.model == 'bert':
         model = BertForSequenceClassification.from_pretrained(args.model_name_or_path, num_labels=len(labels))
